@@ -1,0 +1,19 @@
+{
+    "name": "pixel-game",
+    "version": "1.0.0",
+    "description": "A fun pixel game using dragon data",
+    "main": "index.js",
+    "scripts": {
+      "start": "live-server",  
+      "build": "webpack"  
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "live-server": "^1.2.1",  
+      "webpack": "^5.0.0" 
+    },
+    "dependencies": {
+      
+  }
+}

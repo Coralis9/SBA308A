@@ -1,5 +1,6 @@
+
 // GAME LOGIC
-  
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -7,11 +8,11 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
-// Track number of images loaded
+// Track images loaded
 let imagesLoaded = 0;
 const totalImages = 5; // Map + 4 player sprites
 
-// Load Map Image
+// Map Image
 const mapImage = new Image();
 mapImage.src = "./Img/PixelGameMap.png";
 mapImage.onload = () => {
@@ -19,7 +20,7 @@ mapImage.onload = () => {
     checkImagesLoaded();
 };
 
-// Load Player Sprites
+// Player Sprites
 const playerSprites = {
     down: new Image(),
     left: new Image(),
@@ -27,7 +28,7 @@ const playerSprites = {
     up: new Image(),
 };
 
-// Set source paths
+// Set paths
 playerSprites.down.src = "./Img/playerDown.png";
 playerSprites.left.src = "./Img/playerLeft.png";
 playerSprites.right.src = "./Img/playerRight.png";
@@ -41,7 +42,7 @@ Object.values(playerSprites).forEach((img) => {
     };
 });
 
-// Ensure game starts only when all images are loaded
+// Game starts only when all images are loaded
 function checkImagesLoaded() {
     imagesLoaded++;
     if (imagesLoaded === totalImages) {
@@ -62,7 +63,7 @@ const player = {
     sprite: playerSprites.down, 
 };
 
-// Handle key events for movement
+// Events for movement
 const keys = {};
 document.addEventListener("keydown", (event) => {
     keys[event.key] = true;
@@ -107,7 +108,7 @@ function update() {
     player.y = Math.max(0, Math.min(player.y, canvas.height - player.height));
 }
 
-// Draw game elements
+// Game elements
 function draw() {
     if (!mapImage.complete) {
         console.warn("Map image not loaded yet.");
@@ -118,13 +119,13 @@ function draw() {
         return;
     }
 
-    // Clear canvas
+    // canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw map
+    // map
     ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
 
-    // Draw player
+    // player
     ctx.drawImage(player.sprite, player.x, player.y, player.width, player.height);
 }
 
@@ -135,8 +136,56 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 
 }
+// Fetch data from API
 
 
+fetch('https://www.dnd5eapi.co/api/features') 
+  .then(response => response.json())  
+  .then(data => {
+    
+
+   
+    useDragonDataInGame(data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);  
+  });
+
+
+function useDragonDataInGame(data) {
+  const dragon = {
+    name: data.name,
+    type: data.type,
+    hitPoints: data.hit_points,
+    speed: data.speed,
+    specialAbilities: data.special_abilities,
+    actions: data.actions,
+    image: data.image
+  };
+
+
+  displayDragonInfo(dragon);
+}
+
+
+function displayDragonInfo(dragon) {
+  const dragonContainer = document.getElementById('dragon-info');
+  dragonContainer.innerHTML = `
+    <h2>${dragon.name}</h2>
+    <img src="${dragon.image}" alt="${dragon.name}">
+    <p>Type: ${dragon.type}</p>
+    <p>Hit Points: ${dragon.hitPoints}</p>
+    <p>Speed: Walk: ${dragon.speed.walk}, Fly: ${dragon.speed.fly}</p>
+    <h3>Special Abilities:</h3>
+    <ul>
+      ${dragon.specialAbilities.map(ability => `<li>${ability.name}: ${ability.desc}</li>`).join('')}
+    </ul>
+    <h3>Actions:</h3>
+    <ul>
+      ${dragon.actions.map(action => `<li>${action.name}: ${action.desc}</li>`).join('')}
+    </ul>
+  `;
+}
 
 
 
